@@ -59,30 +59,6 @@
       "coverImageUrl": "https://picsum.photos/seed/book5/200/300",
       "createdAt": "2026-05-15T10:00:00",
       "updatedAt": "2026-05-15T10:00:00"
-    },
-    {
-      "id": "FVXkS78h3pc",
-      "title": "데미안",
-      "author": "헤르만 헤세",
-      "genre": "소설",
-      "likes": 0,
-      "content": "『데미안』은 주인공 싱클레어와 데미안의 우정을 바탕으로, 성장 과정에서 겪는 시련과 그 시련의 극복, 깨달음을 통해 완전한 자아에 이르는 과정을 성찰한다. 이 작품은 헤세 자신에게도 재출발을 의미했으며, 소년기의 심리, 엄격한 구도성, 문명 비판, 만물의 근원으로서의 어머니라는 관념 등 헤세의 전, 후기 작품 특징이 고루 나타나 있다.",
-      "tag": "베스트셀러",
-      "coverImageUrl": "",
-      "createdAt": "2026-05-22T04:32:46.738Z",
-      "updatedAt": "2026-05-22T04:32:46.738Z"
-    },
-    {
-      "title": "셜록 홈즈",
-      "author": "셜록 홈즈",
-      "genre": "소설",
-      "likes": 0,
-      "content": "셜록 홈즈 추리 내용",
-      "tag": "베스트셀러",
-      "coverImageUrl": "",
-      "createdAt": "2026-05-22T04:35:10.236Z",
-      "updatedAt": "2026-05-22T04:35:10.236Z",
-      "id": "Eq-uuLh_TmY"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
