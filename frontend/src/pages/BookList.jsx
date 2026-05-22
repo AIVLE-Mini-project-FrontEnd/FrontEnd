@@ -1,3 +1,6 @@
+/* 샘플데이터 임시로 작성 
+handleLike 추천 기능
+filteredBooks 검색 필터 */
 import React, { useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
