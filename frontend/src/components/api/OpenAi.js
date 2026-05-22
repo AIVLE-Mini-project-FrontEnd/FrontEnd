@@ -54,14 +54,16 @@ Style: professional publishing quality, award-winning book cover art
 // 장르별 무드 설정
 function getGenreMood(genre) {
   const moods = {
-    'SF': 'cyberpunk, dystopian, neon lights, futuristic cityscape',
-    '판타지': 'epic fantasy, magical atmosphere, mystical lighting, ancient world',
-    '소설': 'literary, emotional, human drama, warm and deep tones',
-    '로맨스': 'soft warm colors, dreamy atmosphere, romantic and tender mood',
-    '에세이': 'cozy, analog warmth, everyday life, handwritten feel',
-    '스릴러': 'dark, suspenseful, high contrast shadows, tension',
-    '미스터리': 'moody, mysterious, foggy atmosphere, noir style',
+    '소설':   'literary fiction, emotional depth, human drama, warm and cinematic tones',
+    '고전':   'timeless elegance, vintage aesthetic, aged paper texture, classical art style',
+    '역사':   'historical epic, aged maps, sepia tones, dramatic lighting, period setting',
+    'IT':     'digital technology, circuit patterns, futuristic interface, clean modern design',
+    '동화':   'whimsical illustration, soft pastel colors, magical fairy tale world, children friendly',
+    '자기계발': 'motivational, bright and energetic, clean minimalist design, uplifting mood',
+    '과학':   'scientific discovery, cosmos, molecular structures, clean and precise illustration',
+    '경제':   'professional, financial charts, bold typography, sleek corporate design',
+    '철학':   'deep and contemplative, abstract symbolism, dark and moody, thought-provoking',
+    '예술':   'creative expression, vibrant colors, artistic brushstrokes, gallery-worthy aesthetic',
   }
   // 매핑된 장르가 없으면 기본 무드 반환
-  return moods[genre] || 'artistic, expressive, visually compelling'
-}
+  return moods[genre] || 'artistic, expressive, visually compelling'}
