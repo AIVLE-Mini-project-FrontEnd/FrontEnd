@@ -34,7 +34,58 @@ function App() {
   const handleGoToList = () => {
     setSelectedBookId(null);
     setPage("list");
+    
+    fetch('http://localhost:3000/books')
+      .then((res) => res.json())
+      .then((data) => setBooks(data));
   };
+  
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:3000/books/${id}`, {
+        method: 'DELETE'
+      });
+      alert('삭제 완료');
+      handleGoToList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+const handleUpdate = async (updatedBook) => {
+
+  try {
+    const now = new Date();
+    const res = await fetch(
+      `http://localhost:3000/books/${updatedBook.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: updatedBook.title,
+          author: updatedBook.author,
+          genre: updatedBook.genre,
+          content: updatedBook.content,
+          tag: updatedBook.tag,
+          coverImageUrl: updatedBook.coverImageUrl,
+          updatedAt: now
+        })
+      }
+    );
+    const data = await res.json();
+    // books 상태 업데이트
+    setBooks(prev =>
+      prev.map(book =>
+        book.id === data.id ? data : book
+      )
+    );
+    alert('수정 완료');
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   if (loading) return <><Header /><p>도서 정보를 불러오는 중...</p></>;
   if (error) return <><Header /><p>에러 발생: {error}</p></>;
@@ -49,7 +100,8 @@ function App() {
         {page === "register" ? (
           <BookRegister onBack={handleGoToList} />
         ) : selectedBook ? (
-          <BookDetail book={selectedBook} onBack={handleGoToList} />
+          <BookDetail book={selectedBook} onBack={handleGoToList} onDelete={() => handleDelete(selectedBook.id)} 
+            onUpdate={handleUpdate}/>
         ) : (
           <>
             <button onClick={() => setPage("register")}>+ 도서 등록</button>

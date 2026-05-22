@@ -53,6 +53,7 @@ function BookRegister() {
       alert("도서가 등록되었습니다!");
       setForm({ title: "", author: "", genre: "", likes: 0, content: "", tag: "", coverImageUrl: "" });
       setSelectedTags([]);
+      onBack();
     } else {
       alert("등록 실패! json-server 실행 확인해주세요.");
     }
