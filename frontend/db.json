@@ -1,0 +1,69 @@
+{
+  "books": [
+    {
+      "id": "2",
+      "title": "채식주의자",
+      "author": "한강",
+      "genre": "소설",
+      "likes": 245,
+      "content": "평범한 여성이 어느 날 갑자기 채식을 선언하면서 벌어지는 가족 간의 갈등을 그린 소설",
+      "tag": "한국문학",
+      "coverImageUrl": "https://picsum.photos/seed/book2/200/300",
+      "createdAt": "2026-05-05T10:00:00",
+      "updatedAt": "2026-05-05T10:00:00",
+      "deletedAt": ""
+    },
+    {
+      "id": "3",
+      "title": "총균쇠",
+      "author": "재레드 다이아몬드",
+      "genre": "역사",
+      "likes": 312,
+      "content": "왜 어떤 문명은 다른 문명을 정복할 수 있었는지 지리와 환경의 관점에서 분석한 책",
+      "tag": "역사/인문",
+      "coverImageUrl": "https://picsum.photos/seed/book3/200/300",
+      "createdAt": "2026-05-08T10:00:00",
+      "updatedAt": "2026-05-08T10:00:00",
+      "deletedAt": ""
+    },
+    {
+      "id": "4",
+      "title": "어린 왕자",
+      "author": "생텍쥐페리",
+      "genre": "동화",
+      "likes": 520,
+      "content": "사막에 불시착한 비행사가 어린 왕자를 만나 삶과 사랑의 의미를 깨달아가는 이야기",
+      "tag": "고전/동화",
+      "coverImageUrl": "https://picsum.photos/seed/book4/200/300",
+      "createdAt": "2026-05-10T10:00:00",
+      "updatedAt": "2026-05-10T10:00:00",
+      "deletedAt": ""
+    },
+    {
+      "id": "5",
+      "title": "클린 코드",
+      "author": "로버트 C. 마틴",
+      "genre": "IT",
+      "likes": 198,
+      "content": "좋은 코드란 무엇인지, 어떻게 하면 읽기 쉽고 유지보수하기 좋은 코드를 작성할 수 있는지 설명하는 책",
+      "tag": "개발/프로그래밍",
+      "coverImageUrl": "https://picsum.photos/seed/book5/200/300",
+      "createdAt": "2026-05-15T10:00:00",
+      "updatedAt": "2026-05-15T10:00:00",
+      "deletedAt": ""
+    },
+    {
+      "title": "데미안",
+      "author": "헤르만 헤세",
+      "genre": "소설",
+      "likes": 0,
+      "content": "데미안",
+      "tag": "베스트셀러,추천도서",
+      "coverImageUrl": "",
+      "createdAt": "2026-05-22T07:39:51.583Z",
+      "updatedAt": "2026-05-22T07:39:51.583Z",
+      "id": "e0kE8XgTt3E"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

@@ -1,122 +1,116 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from 'react';
+import Header from './pages/Header';
+import BookList from './pages/BookList';
+import BookDetail from './pages/BookDetail';
+import BookRegister from './pages/BookRegister';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [page, setPage] = useState("list");
+
+  useEffect(() => {
+    async function loadBooks() {
+      try {
+        const res = await fetch('http://localhost:3000/books');
+        if (!res.ok) throw new Error('서버 연결 실패');
+        const data = await res.json();
+        setBooks(data);
+      } catch (err) {
+        console.error(err);
+        setError('도서 목록을 불러오지 못했습니다.');
+      }
+      setLoading(false);
+    }
+    loadBooks();
+  }, []);
+
+  const handleSelectBook = (id) => {
+    setSelectedBookId(id);
+  };
+
+  const handleGoToList = () => {
+    setSelectedBookId(null);
+    setPage("list");
+    
+    fetch('http://localhost:3000/books')
+      .then((res) => res.json())
+      .then((data) => setBooks(data));
+  };
+  
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:3000/books/${id}`, {
+        method: 'DELETE'
+      });
+      alert('삭제 완료');
+      handleGoToList();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+const handleUpdate = async (updatedBook) => {
+
+  try {
+    const now = new Date();
+    const res = await fetch(
+      `http://localhost:3000/books/${updatedBook.id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: updatedBook.title,
+          author: updatedBook.author,
+          genre: updatedBook.genre,
+          content: updatedBook.content,
+          tag: updatedBook.tag,
+          coverImageUrl: updatedBook.coverImageUrl,
+          updatedAt: now
+        })
+      }
+    );
+    const data = await res.json();
+    // books 상태 업데이트
+    setBooks(prev =>
+      prev.map(book =>
+        book.id === data.id ? data : book
+      )
+    );
+    alert('수정 완료');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+  if (loading) return <><Header /><p>도서 정보를 불러오는 중...</p></>;
+  if (error) return <><Header /><p>에러 발생: {error}</p></>;
+
+  const selectedBook = books.find(b => b.id === selectedBookId);
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      <Header />
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <main>
+        {page === "register" ? (
+          <BookRegister onBack={handleGoToList} />
+        ) : selectedBook ? (
+          <BookDetail book={selectedBook} onBack={handleGoToList} onDelete={() => handleDelete(selectedBook.id)} 
+            onUpdate={handleUpdate}/>
+        ) : (
+          <>
+            <button onClick={() => setPage("register")}>+ 도서 등록</button>
+            <BookList books={books} onSelectBook={handleSelectBook} />
+          </>
+        )}
+      </main>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
