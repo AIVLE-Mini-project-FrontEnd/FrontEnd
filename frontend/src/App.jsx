@@ -53,7 +53,6 @@ function App() {
   };
 
 const handleUpdate = async (updatedBook) => {
-
   try {
     const now = new Date();
     const res = await fetch(
@@ -87,6 +86,22 @@ const handleUpdate = async (updatedBook) => {
   }
 };
 
+const handleLike = async (id) => {
+  try {
+    const book = books.find(p => p.id === id);
+    const res = await fetch(`http://localhost:3000/books/${id}`,
+      {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({likes: book.likes + 1})
+      });
+    const updated = await res.json();
+    setBooks(books.map(p => p.id === id ? updated : p));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   if (loading) return <><Header /><p>도서 정보를 불러오는 중...</p></>;
   if (error) return <><Header /><p>에러 발생: {error}</p></>;
 
@@ -105,7 +120,7 @@ const handleUpdate = async (updatedBook) => {
         ) : (
           <>
             <button onClick={() => setPage("register")}>+ 도서 등록</button>
-            <BookList books={books} onSelectBook={handleSelectBook} />
+            <BookList books={books} onSelectBook={handleSelectBook} onLike={handleLike} />
           </>
         )}
       </main>

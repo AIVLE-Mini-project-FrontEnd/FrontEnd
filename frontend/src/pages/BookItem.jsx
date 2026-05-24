@@ -1,6 +1,4 @@
-import React from 'react';
-
-function BookItem({ id, title, author, tag, coverImageUrl, onSelect }) {
+function BookItem({ id, title, author, tag, likes, coverImageUrl, onSelect, onLike }) {
   // 컴마(,)로 들어온 태그 문자열을 배열로 쪼갬 (예: "React,Java" -> ["React", "Java"])
   const tagsArray = tag ? tag.split(',') : [];
 
@@ -21,6 +19,13 @@ function BookItem({ id, title, author, tag, coverImageUrl, onSelect }) {
           <span key={idx} style={{ marginRight: '5px' }}>#{t.trim()}</span>
         ))}
       </div>
+
+      <button onClick={(e) => {
+        e.stopPropagation();
+        onLike(id);
+      }}>
+        ❤️ {likes}
+      </button>
     </li>
   );
 }
