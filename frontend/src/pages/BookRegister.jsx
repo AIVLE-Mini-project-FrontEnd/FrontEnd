@@ -41,6 +41,7 @@ function BookRegister() {
       likes: Number(form.likes),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: "",
     };
 
     const res = await fetch("http://localhost:3000/books", {

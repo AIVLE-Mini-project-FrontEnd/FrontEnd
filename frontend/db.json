@@ -51,18 +51,6 @@
       "createdAt": "2026-05-15T10:00:00",
       "updatedAt": "2026-05-15T10:00:00",
       "deletedAt": ""
-    },
-    {
-      "title": "데미안",
-      "author": "헤르만 헤세",
-      "genre": "소설",
-      "likes": 0,
-      "content": "데미안",
-      "tag": "베스트셀러,추천도서",
-      "coverImageUrl": "",
-      "createdAt": "2026-05-22T07:39:51.583Z",
-      "updatedAt": "2026-05-22T07:39:51.583Z",
-      "id": "e0kE8XgTt3E"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
