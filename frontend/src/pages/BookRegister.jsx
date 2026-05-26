@@ -18,6 +18,7 @@ function BookRegister({ onBack }) {
   });
 
   const [selectedTags, setSelectedTags] = useState([]);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +35,22 @@ function BookRegister({ onBack }) {
     );
   };
 
+  const validate = () => {
+    const newErrors = {};
+    if (!form.title.trim()) newErrors.title = "도서 제목을 입력해주세요.";
+    if (!form.author.trim()) newErrors.author = "저자 이름을 입력해주세요.";
+    if (!form.genre) newErrors.genre = "장르를 선택해주세요.";
+    return newErrors;
+  };
+
 const handleSubmit = async () => {
+    const newErrors = validate();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    setErrors({});
+
     const newBook = {
       ...form,
       tag: selectedTags.join(","),
@@ -69,34 +85,39 @@ const handleSubmit = async () => {
       <h2 style={styles.pageTitle}>새 도서 등록하기</h2>
 
       <div style={styles.formGroup}>
-        <label style={styles.label}>도서 제목</label>
-        <Input 
-          name="title" 
-          placeholder="도서 제목을 입력하세요" 
-          value={form.title} 
-          onChange={handleChange} 
-          style={styles.input}
+        <label style={styles.label}>도서 제목 <span style={styles.required}>*</span></label>
+        <Input
+          name="title"
+          placeholder="도서 제목을 입력하세요"
+          value={form.title}
+          onChange={(e) => { handleChange(e); setErrors((prev) => ({ ...prev, title: "" })); }}
+          style={{ ...styles.input, ...(errors.title ? styles.inputError : {}) }}
         />
+        {errors.title && <p style={styles.errorMsg}>{errors.title}</p>}
       </div>
 
       <div style={styles.formGroup}>
-        <label style={styles.label}>저자명</label>
-        <Input 
-          name="author" 
-          placeholder="저자 이름을 입력하세요" 
-          value={form.author} 
-          onChange={handleChange} 
-          style={styles.input}
+        <label style={styles.label}>저자명 <span style={styles.required}>*</span></label>
+        <Input
+          name="author"
+          placeholder="저자 이름을 입력하세요"
+          value={form.author}
+          onChange={(e) => { handleChange(e); setErrors((prev) => ({ ...prev, author: "" })); }}
+          style={{ ...styles.input, ...(errors.author ? styles.inputError : {}) }}
         />
+        {errors.author && <p style={styles.errorMsg}>{errors.author}</p>}
       </div>
 
       <div style={styles.formGroup}>
-        <p style={styles.label}>장르 선택</p>
-        <div style={styles.chipContainer}>
+        <p style={styles.label}>장르 선택 <span style={styles.required}>*</span></p>
+        <div style={{
+          ...styles.chipContainer,
+          ...(errors.genre ? styles.chipContainerError : {})
+        }}>
           {GENRE_LIST.map((g) => (
             <span
               key={g}
-              onClick={() => handleGenreSelect(g)}
+              onClick={() => { handleGenreSelect(g); setErrors((prev) => ({ ...prev, genre: "" })); }}
               style={{
                 ...styles.chip,
                 border: `1px solid ${form.genre === g ? "#1D9E75" : "#ccc"}`,
@@ -109,6 +130,7 @@ const handleSubmit = async () => {
             </span>
           ))}
         </div>
+        {errors.genre && <p style={styles.errorMsg}>{errors.genre}</p>}
       </div>
 
       <div style={styles.formGroup}>
@@ -213,19 +235,38 @@ const styles = {
     transition: "all 0.15s ease",
     userSelect: "none"
   },
-  submitButton: { 
+  submitButton: {
     width: "100%",
-    padding: "14px", 
-    backgroundColor: "#1D9E75", 
-    color: "#fff", 
-    border: "none", 
-    borderRadius: "6px", 
+    padding: "14px",
+    backgroundColor: "#1D9E75",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
     cursor: "pointer",
     fontSize: "16px",
     fontWeight: "bold",
     boxShadow: "0 2px 6px rgba(29, 158, 117, 0.2)",
     transition: "background-color 0.2s"
-  }
+  },
+  required: {
+    color: "#e53e3e",
+    marginLeft: "2px",
+  },
+  inputError: {
+    border: "1px solid #e53e3e",
+    backgroundColor: "#fff5f5",
+  },
+  chipContainerError: {
+    padding: "8px",
+    borderRadius: "6px",
+    border: "1px solid #e53e3e",
+    backgroundColor: "#fff5f5",
+  },
+  errorMsg: {
+    margin: "5px 0 0 2px",
+    fontSize: "12px",
+    color: "#e53e3e",
+  },
 };
 
 export default BookRegister;

@@ -54,17 +54,28 @@ function BookSection({ onSelectBook }) {
 
   const [popularIndex, setPopularIndex] = useState(0);
   const [popularBooks, setPopularBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/books')
-      .then((res) => res.json())
-      .then((data) => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch('http://localhost:3000/books');
+        if (!res.ok) throw new Error('서버 응답 오류');
+        const data = await res.json();
         const sorted = data
           .filter((book) => !book.deletedAt)
           .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
         setPopularBooks(sorted);
-      })
-      .catch((err) => console.error('도서 목록 불러오기 실패:', err));
+      } catch (err) {
+        console.error('도서 목록 불러오기 실패:', err);
+        setError('도서 목록을 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
   }, []);
 
   const movePrev = (books, startIndex, setStartIndex) => {
@@ -83,6 +94,39 @@ function BookSection({ onSelectBook }) {
     popularIndex,
     popularIndex + visibleCount
   );
+
+  if (loading) {
+    return (
+      <div className="likes-book-wrap">
+        <section className="likes-book-section">
+          <div className="likes-book-header"><h2>좋아요 높은 순</h2></div>
+          <p style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>📚 도서를 불러오는 중...</p>
+        </section>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="likes-book-wrap">
+        <section className="likes-book-section">
+          <div className="likes-book-header"><h2>좋아요 높은 순</h2></div>
+          <p style={{ textAlign: "center", padding: "40px 0", color: "#c53030" }}>⚠️ {error}</p>
+        </section>
+      </div>
+    );
+  }
+
+  if (popularBooks.length === 0) {
+    return (
+      <div className="likes-book-wrap">
+        <section className="likes-book-section">
+          <div className="likes-book-header"><h2>좋아요 높은 순</h2></div>
+          <p style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>📭 등록된 도서가 없습니다.</p>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="likes-book-wrap">
@@ -318,23 +362,26 @@ function StatisticsSection() {
   const likeCountData =
     likeCountType === "genre" ? getLikeCountByGenre() : getLikeCountByTag();
 
-  if (statsLoading) {
-    return (
-      <section className="stats-section">
-        <h2>도서 통계</h2>
-        <p>통계 데이터를 불러오는 중...</p>
-      </section>
-    );
-  }
+  if (statsLoading) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>📊 통계 데이터를 불러오는 중...</p>
+    </section>
+  );
 
-  if (statsError) {
-    return (
-      <section className="stats-section">
-        <h2>도서 통계</h2>
-        <p>{statsError}</p>
-      </section>
-    );
-  }
+  if (statsError) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p style={{ textAlign: "center", padding: "40px 0", color: "#c53030" }}>⚠️ {statsError}</p>
+    </section>
+  );
+
+  if (books.length === 0) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p style={{ textAlign: "center", padding: "40px 0", color: "#888" }}>📭 통계를 표시할 도서가 없습니다.</p>
+    </section>
+  );
 
   return (
     <section className="stats-section">
