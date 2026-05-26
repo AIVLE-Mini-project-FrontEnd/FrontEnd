@@ -196,13 +196,26 @@ function StatisticsSection() {
   const [genreChartType, setGenreChartType] = useState("pie");
   const [tagChartType, setTagChartType] = useState("pie");
 
-  const books = [
-    { title: "도서명1", genre: "소설", tag: ["추천도서", "한국문학"], likes: 120 },
-    { title: "도서명2", genre: "고전", tag: ["개발/프로그래밍", "베스트셀러"], likes: 95 },
-    { title: "도서명3", genre: "역사", tag: ["과학기술"], likes: 180 },
-    { title: "도서명4", genre: "IT", tag: ["고전문학"], likes: 70 },
-    { title: "도서명5", genre: "과학", tag: ["고전/동화", "고전문학"], likes: 210 },
-  ];
+  const [books, setBooks] = useState([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/books')
+      .then((res) => {
+        if (!res.ok) throw new Error('서버 연결 실패');
+        return res.json();
+      })
+      .then((data) => {
+        setBooks(data.filter((book) => !book.deletedAt));
+        setStatsLoading(false);
+      })
+      .catch((err) => {
+        console.error('통계 데이터 불러오기 실패:', err);
+        setStatsError('통계 데이터를 불러오지 못했습니다.');
+        setStatsLoading(false);
+      });
+  }, []);
 
   const colors = ["#3ba4f6", "#6b4fd6", "#a78bfa", "#2f5673", "#f5a623"];
 
@@ -220,8 +233,14 @@ function StatisticsSection() {
     const result = {};
 
     books.forEach((book) => {
-      book.tag.forEach((tag) => {
-        result[tag] = (result[tag] || 0) + book.likes;
+      const tags = Array.isArray(book.tag)
+        ? book.tag
+        : typeof book.tag === 'string' && book.tag.trim()
+          ? [book.tag]
+          : [];
+
+      tags.forEach((tag) => {
+        result[tag] = (result[tag] || 0) + (book.likes ?? 0);
       });
     });
 
@@ -317,6 +336,20 @@ function StatisticsSection() {
 
   const genreStats = GenreStats();
   const tagStats = TagStats();
+
+  if (statsLoading) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p>통계 데이터를 불러오는 중...</p>
+    </section>
+  );
+
+  if (statsError) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p>{statsError}</p>
+    </section>
+  );
 
   return (
     <section className="stats-section">
