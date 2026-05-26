@@ -359,6 +359,9 @@ function StatisticsSection() {
   const bookCountData =
     bookCountType === "genre" ? getBookCountByGenre() : getBookCountByTag();
 
+  const likeCountData =
+    likeCountType === "genre" ? getLikeCountByGenre() : getLikeCountByTag();
+
   if (statsLoading) return (
     <section className="stats-section">
       <h2>도서 통계</h2>
