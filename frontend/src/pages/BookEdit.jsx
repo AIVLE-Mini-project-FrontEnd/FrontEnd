@@ -1,6 +1,7 @@
+import { generateBookCover } from '../components/api/Openapi'
+import { generateOneLiner } from '../components/api/Openapi_text'
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { generateBookCover } from '../components/api/Openapi';
 
 const JSON_SERVER_URL = 'http://localhost:3000';
 
@@ -18,11 +19,13 @@ function BookEdit() {
   const [tag, setTag] = useState('');
 
   // AI 표지 생성 관련 상태
-  const [apiKey, setApiKey] = useState('');
-  const [quality, setQuality] = useState('low');
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [coverPreview, setCoverPreview] = useState('');
+  const [apiKey, setApiKey] = useState('')
+  const [quality, setQuality] = useState('low')
+  const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)  // 저장 상태
+  const [coverPreview, setCoverPreview] = useState('')
+  const [summary, setSummary] = useState('')
+  const [oneLinerLoading, setOneLinerLoading] = useState(false)
 
   // 도서 데이터 fetch
   useEffect(() => {
@@ -37,6 +40,7 @@ function BookEdit() {
         setContent(data.content);
         setTag(data.tag);
         setCoverPreview(data.coverImageUrl || '');
+        setSummary(data.summary || '');
       } catch (err) {
         console.error(err);
         alert(err.message);
@@ -61,6 +65,7 @@ function BookEdit() {
           content,
           tag,
           coverImageUrl: coverPreview,
+          summary,
           updatedAt: new Date().toISOString(),
         }),
       });
@@ -73,7 +78,28 @@ function BookEdit() {
     }
   }
 
-  // AI 표지 생성
+
+  async function handleGenerateOneLiner() {
+    if (!apiKey.trim()) {
+      alert('OpenAI API Key를 입력해주세요.')
+      return
+    }
+    setOneLinerLoading(true)
+    try {
+      const editedBook = { title, author, content, tag, genre: book.genre }
+      const result = await generateOneLiner(editedBook, apiKey)
+      setSummary(result)
+    } catch (err) {
+      if (err.message === '401')           alert('API Key가 올바르지 않습니다.')
+      else if (err.message === '429')      alert('요청 한도 초과. 잠시 후 다시 시도해주세요.')
+      else if (err.message === 'PARSE_ERROR') alert('응답 형식 오류가 발생했습니다.')
+      else                                 alert(`오류: ${err.message}`)
+    } finally {
+      setOneLinerLoading(false)
+    }
+  }
+
+  // AI 표지 생성 버튼
   async function handleGenerateCover() {
     if (!apiKey.trim()) {
       alert('OpenAI API Key를 입력해주세요.');
@@ -104,7 +130,7 @@ function BookEdit() {
 
   return (
     <div className="book-edit">
-      <button onClick={() => navigate(-1)}>← 뒤로 가기</button>
+      <button onClick={() => navigate(`/books/${id}`)}>← 뒤로 가기</button>
       <h2>📝 도서 수정</h2>
 
       <div className="edit-layout">
@@ -163,6 +189,28 @@ function BookEdit() {
           >
             {saving ? '💾 저장 중...' : '💾 저장'}
           </button>
+
+          {/* 한줄평 섹션 */}
+          <div className="ai-section">
+            <h3>✏️ AI 한줄평 생성</h3>
+            <button
+              className="generate-btn"
+              onClick={handleGenerateOneLiner}
+              disabled={oneLinerLoading}
+            >
+              {oneLinerLoading ? '⏳ 생성 중...' : '✏️ 한줄평 생성'}
+            </button>
+            {summary && (
+              <div className="form-group" style={{ marginTop: '8px' }}>
+                <label>한줄평</label>
+                <textarea
+                  value={summary}
+                  onChange={(e) => setSummary(e.target.value)}
+                  rows={2}
+                />
+              </div>
+            )}
+          </div>
 
           {/* AI 표지 생성 섹션 */}
           <div className="ai-section">
