@@ -109,9 +109,9 @@ function DeletedBookPage() {
   return (
     <section className="app-content trash-page">
       <div className="trash-header">
-        <h1 className="page-title">삭제된 도서</h1>
+        <h1 className="page-title">휴지통</h1>
         <p className="page-desc">
-          삭제된 도서입니다. 복원하거나 영구 삭제할 수 있습니다.
+          삭제된 도서를 복원하거나 영구 삭제할 수 있습니다.
         </p>
       </div>
 
