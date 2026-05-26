@@ -1,17 +1,10 @@
-/**
- * 도서 삭제 페이지
- * deletedAt 필드에 삭제 날짜가 있는 도서만 표시합니다.
- */
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DeletedBookCard from '../components/DeletedBookCard';
 
 async function parseResponse(res, fallbackMessage) {
-  if (!res.ok) {
-    throw new Error(fallbackMessage);
-  }
-  if (res.status === 204) {
-    return null;
-  }
+  if (!res.ok) throw new Error(fallbackMessage);
+  if (res.status === 204) return null;
   return res.json();
 }
 
@@ -40,7 +33,8 @@ async function permanentDeleteBook(id) {
   return parseResponse(res, '영구 삭제에 실패했습니다.');
 }
 
-function DeletedBookPage() {
+function DeletedBook() {
+  const navigate = useNavigate();
   const [deletedBooks, setDeletedBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +55,6 @@ function DeletedBookPage() {
         setLoading(false);
       }
     };
-
     loadDeleted();
   }, []);
 
@@ -72,6 +65,7 @@ function DeletedBookPage() {
       const restored = await restoreDeletedBook(id);
       setDeletedBooks((prev) => prev.filter((b) => b.id !== id));
       setMessage(`"${restored.title}" 도서가 복원되었습니다.`);
+      navigate('/books');
     } catch (e) {
       console.error(e);
       setError('도서 복원에 실패했습니다.');
@@ -82,7 +76,7 @@ function DeletedBookPage() {
 
   const handlePermanentDelete = async (book) => {
     const ok = window.confirm(
-      `"${book.title}"을(를) 영구 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`,
+      `"${book.title}"을(를) 영구 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`
     );
     if (!ok) return;
 
@@ -117,22 +111,15 @@ function DeletedBookPage() {
         </p>
       </div>
 
-      {error && (
-        <p className="status-message status-message--error">{error}</p>
-      )}
-      {message && (
-        <p className="status-message status-message--success">{message}</p>
-      )}
+      {error && <p className="status-message status-message--error">{error}</p>}
+      {message && <p className="status-message status-message--success">{message}</p>}
 
       {!deletedBooks.length ? (
         <div className="trash-empty">
-          <span className="trash-empty-icon" aria-hidden>
-            🗑️
-          </span>
+          <span className="trash-empty-icon" aria-hidden>🗑️</span>
           <p className="empty-message">휴지통이 비어 있습니다.</p>
           <p className="page-desc">
-            도서 상세·목록에서 휴지통으로 이동한 도서가 여기에
-            표시됩니다.
+            도서 상세·목록에서 휴지통으로 이동한 도서가 여기에 표시됩니다.
           </p>
         </div>
       ) : (
@@ -155,6 +142,4 @@ function DeletedBookPage() {
   );
 }
 
-export default DeletedBookPage;
-
-
+export default DeletedBook;

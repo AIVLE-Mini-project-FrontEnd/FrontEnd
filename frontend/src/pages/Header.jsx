@@ -1,16 +1,19 @@
-import { useState, useEffect } from "react";
-import logo from "../img/logo.png";
-function Header({ onGoToMain }) {
-  const [isHeaderOpen, setIsHeaderOpen] = useState(false);
-  const [selectedTab, setSelectedTab] = useState("genre");
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import logo from '../img/logo.png';
 
-  const GENRE_LIST = ["소설", "고전", "역사"];
-  const TAG_LIST = ["한국문학", "고전문학", "개발/프로그래밍"];
+function Header() {
+  const navigate = useNavigate();
+  const [isHeaderOpen, setIsHeaderOpen] = useState(false);
 
   return (
     <header className="header">
       <div className="header-inner">
-        <div className="logo" onClick={onGoToMain} style={{ cursor: "pointer" }}>
+        <div
+          className="logo"
+          onClick={() => navigate('/')}
+          style={{ cursor: 'pointer' }}
+        >
           <img src={logo} alt="로고" />
         </div>
 
@@ -30,7 +33,6 @@ function Header({ onGoToMain }) {
           <button className="icon-btn">🔍</button>
           <button className="detail-btn">상세검색</button>
         </div>
-
       </div>
     </header>
   );
