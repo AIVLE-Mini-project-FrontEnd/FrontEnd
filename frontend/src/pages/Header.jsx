@@ -1,25 +1,13 @@
-import logo from "../img/logo.png";
+import { useNavigate } from 'react-router-dom';
+import logo from '../img/logo.png';
 
-function Header({
-  onGoToMain,
-  onGoToList,
-  onGoToRegister,
-  onGoToDeleted
-}) {
+function Header() {
+  const navigate = useNavigate();
 
   const NAV_LIST = [
-    {
-      title: "도서목록",
-      onClick: onGoToList,
-    },
-    {
-      title: "새 도서 등록",
-      onClick: onGoToRegister,
-    },
-    {
-      title: "휴지통",
-      onClick: onGoToDeleted,
-    },
+    { title: '도서목록',    path: '/books' },
+    { title: '새 도서 등록', path: '/books/register' },
+    { title: '휴지통',      path: '/books/deleted' },
   ];
 
   return (
@@ -28,8 +16,8 @@ function Header({
 
         <div
           className="logo"
-          onClick={onGoToMain}
-          style={{ cursor: "pointer" }}
+          onClick={() => navigate('/')}
+          style={{ cursor: 'pointer' }}
         >
           <img src={logo} alt="로고" />
         </div>
@@ -39,7 +27,7 @@ function Header({
             <button
               key={menu.title}
               className="nav-item"
-              onClick={menu.onClick}
+              onClick={() => navigate(menu.path)}
             >
               {menu.title}
             </button>
