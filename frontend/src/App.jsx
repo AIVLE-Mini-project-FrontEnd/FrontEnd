@@ -3,6 +3,8 @@ import Header from './pages/Header';
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import BookRegister from './pages/BookRegister';
+import Footer from './pages/Footer';
+import BookMain from './pages/BookMain';
 
 function App() {
   const [books, setBooks] = useState([]);
@@ -95,7 +97,7 @@ const handleUpdate = async (updatedBook) => {
   return (
     <>
       <Header />
-
+      <BookMain />
       <main>
         {page === "register" ? (
           <BookRegister onBack={handleGoToList} />
@@ -109,6 +111,7 @@ const handleUpdate = async (updatedBook) => {
           </>
         )}
       </main>
+      <Footer />
     </>
   );
 }
