@@ -49,66 +49,6 @@ function Navigation({ onGoToList, onGoToRegister, onGoToDeleted }) {
   );
 }
 
-/*
-function SlideSection() {
-  const [slide, setSlide] = useState(0);
-  const slides = ["#d9d9d9", "#cfcfcf", "#bfbfbf", "#a9a9a9"];
-
-  const movePrev = () => {
-    setSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
-  };
-
-  const moveNext = () => {
-    setSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    }, 2000);
-
-    return () => clearInterval(timer);
-  }, [slides.length]);
-
-  return (
-    <section className="slide-section">
-      <div className="slide-box">
-        <button className="slide-btn left" onClick={movePrev}>
-          ‹
-        </button>
-
-        <div
-          className="slide-img"
-          style={{ backgroundColor: slides[slide] }}
-        >
-          <h1>{slide + 1}</h1>
-        </div>
-
-        <button className="slide-btn right" onClick={moveNext}>
-          ›
-        </button>
-      </div>
-
-      <div className="slide-control">
-        <div className="dots">
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              className={slide === index ? "dot active" : "dot"}
-              onClick={() => setSlide(index)}
-            />
-          ))}
-        </div>
-
-        <div className="count">
-          {slide + 1} / {slides.length}
-        </div>
-      </div>
-    </section>
-  );
-}
-*/
-
 function BookSection({ onSelectBook }) {
   const visibleCount = 5;
 
