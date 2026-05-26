@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function BookDetail({ book, onBack, onDelete, onUpdate }) {
+function BookDetail({ book, onBack, onDelete, onUpdate, onLike }) {
   const tagsArray = book.tag ? book.tag.split(',') : [];
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -51,7 +51,9 @@ const handleSubmitUpdate = () => {
             />
           )}
 
-          <p>❤️ 추천 수: {book.likes}개</p>
+          <button onClick={() => onLike(book.id)}>
+            ❤️ {book.likes}
+          </button>
         </div>
         {/* 장르 */}
         <div>

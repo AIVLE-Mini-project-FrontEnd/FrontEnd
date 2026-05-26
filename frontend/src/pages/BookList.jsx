@@ -1,6 +1,6 @@
 import BookItem from './BookItem'; // 개별 아이템 가져오기
 
-function BookList({ books, onSelectBook, onLike }) {
+function BookList({ books, onSelectBook }) {
   return (
     <div style={{ padding: '20px' }}>
       <h2>📖 도서 목록</h2>
@@ -17,7 +17,6 @@ function BookList({ books, onSelectBook, onLike }) {
             tag={book.tag}
             coverImageUrl={book.coverImageUrl}
             onSelect={onSelectBook}
-            onLike={onLike} // 
           />
         ))}
       </ul>

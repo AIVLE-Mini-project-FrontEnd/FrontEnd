@@ -1,4 +1,4 @@
-function BookItem({ id, title, author, tag, likes, coverImageUrl, onSelect, onLike }) {
+function BookItem({ id, title, author, tag, likes, coverImageUrl, onSelect }) {
   // 컴마(,)로 들어온 태그 문자열을 배열로 쪼갬 (예: "React,Java" -> ["React", "Java"])
   const tagsArray = tag ? tag.split(',') : [];
 
@@ -20,12 +20,9 @@ function BookItem({ id, title, author, tag, likes, coverImageUrl, onSelect, onLi
         ))}
       </div>
 
-      <button onClick={(e) => {
-        e.stopPropagation();
-        onLike(id);
-      }}>
-        ❤️ {likes}
-      </button>
+      {/* 5. 추천수 (표시만) */}
+      <p>❤️ {likes}</p>
+
     </li>
   );
 }

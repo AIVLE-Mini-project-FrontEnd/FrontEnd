@@ -115,12 +115,12 @@ const handleLike = async (id) => {
         {page === "register" ? (
           <BookRegister onBack={handleGoToList} />
         ) : selectedBook ? (
-          <BookDetail book={selectedBook} onBack={handleGoToList} onDelete={() => handleDelete(selectedBook.id)} 
-            onUpdate={handleUpdate}/>
+          <BookDetail book={selectedBook} onBack={handleGoToList} onDelete={() => handleDelete(selectedBook.id)}
+            onUpdate={handleUpdate} onLike={handleLike} />
         ) : (
           <>
             <button onClick={() => setPage("register")}>+ 도서 등록</button>
-            <BookList books={books} onSelectBook={handleSelectBook} onLike={handleLike} />
+            <BookList books={books} onSelectBook={handleSelectBook} />
           </>
         )}
       </main>
