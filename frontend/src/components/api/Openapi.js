@@ -49,7 +49,7 @@ Style: professional publishing quality, award-winning book cover art
 
   // Data URL로 변환 후 압축해서 반환
   const dataUrl = `data:image/png;base64,${b64Json}`
-  return compressImage(dataUrl, 512, 0.8)
+  return compressImage(dataUrl, 400, 0.5)
 }
 
 // Base64 이미지를 canvas로 리사이즈 + JPEG 압축
