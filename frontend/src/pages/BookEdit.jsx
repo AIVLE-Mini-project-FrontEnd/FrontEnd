@@ -1,9 +1,7 @@
-import { useState } from 'react'
 import { generateBookCover } from '../components/api/Openapi'
 import { generateOneLiner } from '../components/api/Openapi_text'
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { generateBookCover } from '../components/api/Openapi';
 
 const JSON_SERVER_URL = 'http://localhost:3000';
 
@@ -25,8 +23,8 @@ function BookEdit() {
   const [quality, setQuality] = useState('low')
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)  // 저장 상태
-  const [coverPreview, setCoverPreview] = useState(book.coverImageUrl || '')
-  const [summary, setSummary] = useState(book.summary || '')
+  const [coverPreview, setCoverPreview] = useState('')
+  const [summary, setSummary] = useState('')
   const [oneLinerLoading, setOneLinerLoading] = useState(false)
 
   // 도서 데이터 fetch
@@ -42,6 +40,7 @@ function BookEdit() {
         setContent(data.content);
         setTag(data.tag);
         setCoverPreview(data.coverImageUrl || '');
+        setSummary(data.summary || '');
       } catch (err) {
         console.error(err);
         alert(err.message);
@@ -131,7 +130,7 @@ function BookEdit() {
 
   return (
     <div className="book-edit">
-      <button onClick={() => navigate(-1)}>← 뒤로 가기</button>
+      <button onClick={() => navigate(`/books/${id}`)}>← 뒤로 가기</button>
       <h2>📝 도서 수정</h2>
 
       <div className="edit-layout">

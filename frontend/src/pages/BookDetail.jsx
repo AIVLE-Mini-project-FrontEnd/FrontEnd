@@ -206,12 +206,11 @@ function BookDetail() {
         {/* 상단 버튼 */}
         <div style={styles.buttonRow}>
           {!isEditMode ? (
-            <button style={styles.editBtn} onClick={() => setIsEditMode(true)}>수정</button>
+            <button style={styles.editBtn} onClick={() => navigate(`/books/${id}/edit`)}>수정</button>
           ) : (
             <button style={styles.saveBtn} onClick={handleSubmitUpdate}>✅ 수정 완료</button>
           )}
           <button style={styles.deleteBtn} onClick={handleDelete}>삭제</button>
-          <button style={styles.editBtn} onClick={() => navigate(`/books/${id}/edit`)}>🎨 AI 표지</button>
         </div>
 
         {/* 이미지 + 정보 가로 배치 */}
