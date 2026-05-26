@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "json-server db.json --port 3000 --bodyLimit 100mb",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

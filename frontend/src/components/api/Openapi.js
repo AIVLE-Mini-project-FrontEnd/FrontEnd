@@ -47,8 +47,25 @@ Style: professional publishing quality, award-winning book cover art
   const b64Json = data.data?.[0]?.b64_json
   if (!b64Json) throw new Error('PARSE_ERROR')
 
-  // Data URL 형태로 변환 후 반환
-  return `data:image/png;base64,${b64Json}`
+  // Data URL로 변환 후 압축해서 반환
+  const dataUrl = `data:image/png;base64,${b64Json}`
+  return compressImage(dataUrl, 400, 0.5)
+}
+
+// Base64 이미지를 canvas로 리사이즈 + JPEG 압축
+export function compressImage(dataUrl, maxWidth = 512, quality = 0.8) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      const scale = Math.min(1, maxWidth / img.width)
+      const canvas = document.createElement('canvas')
+      canvas.width  = img.width  * scale
+      canvas.height = img.height * scale
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      resolve(canvas.toDataURL('image/jpeg', quality))
+    }
+    img.src = dataUrl
+  })
 }
 
 // 장르별 무드 설정

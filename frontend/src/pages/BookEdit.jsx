@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { generateBookCover } from '../components/api/openai'
+import { generateBookCover } from '../components/api/Openapi'
+import './BookEdit.css'
 
 const JSON_SERVER_URL = 'http://localhost:3000'
 
-function BookEdit({ book, onCoverUpdate }) {
+function BookEdit({ book, onCoverUpdate, onBack, onSave }) {
   // 도서 수정 필드 상태
   const [title, setTitle] = useState(book.title)
   const [author, setAuthor] = useState(book.author)
@@ -29,11 +30,14 @@ function BookEdit({ book, onCoverUpdate }) {
           author,
           content,
           tag,
-          updatedAt: new Date().toISOString(), // 수정 시간 갱신
+          coverImageUrl: coverPreview,
+          updatedAt: new Date().toISOString(),
         }),
       })
       if (!res.ok) throw new Error('저장 실패')
-      alert('저장되었습니다!')
+      const data = await res.json()
+      onSave(data)
+      onBack()
     } catch (err) {
       alert(`저장 오류: ${err.message}`)
     } finally {
@@ -68,6 +72,7 @@ function BookEdit({ book, onCoverUpdate }) {
 
   return (
     <div className="book-edit">
+      <button onClick={onBack}>← 뒤로 가기</button>
       <h2>📝 도서 수정</h2>
 
       <div className="edit-layout">

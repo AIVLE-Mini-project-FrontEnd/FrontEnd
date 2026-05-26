@@ -3,6 +3,7 @@ import Header from './pages/Header';
 import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import BookRegister from './pages/BookRegister';
+import BookEdit from './pages/BookEdit';
 import Footer from './pages/Footer';
 import BookMain from './pages/BookMain';
 import DeletedBook from './pages/DeletedBook';
