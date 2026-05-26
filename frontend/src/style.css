@@ -816,6 +816,66 @@ button {
   padding: 20px;
 }
 
+.book-list-result-info {
+  margin: -10px 0 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 36px;
+  padding-bottom: 20px;
+}
+
+.pagination__btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.pagination__btn:hover:not(:disabled) {
+  border-color: #1D9E75;
+  color: #1D9E75;
+}
+
+.pagination__btn--active {
+  background: #1D9E75;
+  border-color: #1D9E75;
+  color: #fff;
+  font-weight: 700;
+}
+
+.pagination__btn--arrow {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.pagination__btn:disabled {
+  color: #ccc;
+  border-color: #eee;
+  cursor: default;
+}
+
+.pagination__ellipsis {
+  color: #aaa;
+  font-size: 14px;
+  padding: 0 2px;
+  user-select: none;
+}
+
 /* ============================================================
    Book Item (도서 상세 카드)
    ============================================================ */

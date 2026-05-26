@@ -1,13 +1,83 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import noCover from '../img/no-cover.svg';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
+const BOOKS_PER_PAGE = 4;
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null;
+
+  // 표시할 페이지 번호 범위 계산 (최대 5개)
+  const getPageNumbers = () => {
+    const pages = [];
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(totalPages, start + 4);
+    if (end - start < 4) start = Math.max(1, end - 4);
+
+    for (let i = start; i <= end; i++) pages.push(i);
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
+  return (
+    <div className="pagination">
+      <button
+        className="pagination__btn pagination__btn--arrow"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        aria-label="이전 페이지"
+      >
+        ‹
+      </button>
+
+      {pageNumbers[0] > 1 && (
+        <>
+          <button className="pagination__btn" onClick={() => onPageChange(1)}>1</button>
+          {pageNumbers[0] > 2 && <span className="pagination__ellipsis">…</span>}
+        </>
+      )}
+
+      {pageNumbers.map((page) => (
+        <button
+          key={page}
+          className={`pagination__btn${currentPage === page ? ' pagination__btn--active' : ''}`}
+          onClick={() => onPageChange(page)}
+        >
+          {page}
+        </button>
+      ))}
+
+      {pageNumbers[pageNumbers.length - 1] < totalPages && (
+        <>
+          {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
+            <span className="pagination__ellipsis">…</span>
+          )}
+          <button className="pagination__btn" onClick={() => onPageChange(totalPages)}>
+            {totalPages}
+          </button>
+        </>
+      )}
+
+      <button
+        className="pagination__btn pagination__btn--arrow"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        aria-label="다음 페이지"
+      >
+        ›
+      </button>
+    </div>
+  );
+}
+
 function BookList() {
   const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const bookUrl = 'http://localhost:3000/books';
@@ -20,7 +90,7 @@ function BookList() {
         const res = await fetch(bookUrl);
         if (!res.ok) throw new Error('서버 응답 오류');
         const data = await res.json();
-        setBooks(data);
+        setBooks(data.filter((book) => !book.deletedAt));
       } catch (error) {
         console.error('도서 목록 로딩 실패:', error);
         setError('도서 목록을 불러오지 못했습니다. json-server가 실행 중인지 확인해주세요.');
@@ -50,11 +120,27 @@ function BookList() {
     }
   };
 
-  const filteredBooks = books.filter(
-    (book) =>
-      book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      book.author?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBooks = useMemo(() =>
+    books.filter(
+      (book) =>
+        book.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author?.toLowerCase().includes(searchTerm.toLowerCase())
+    ),
+    [books, searchTerm]
   );
+
+  const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE);
+
+  const pagedBooks = useMemo(() => {
+    const start = (currentPage - 1) * BOOKS_PER_PAGE;
+    return filteredBooks.slice(start, start + BOOKS_PER_PAGE);
+  }, [filteredBooks, currentPage]);
+
+  // 검색어 바뀌면 1페이지로 리셋
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   if (loading) {
     return (
@@ -92,18 +178,25 @@ function BookList() {
           name="search"
           placeholder="제목 또는 작가를 입력하세요..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearchChange}
           className="book-list-search-input"
         />
         <Button
           label="검색"
-          onClick={() => alert(`'${searchTerm}' 검색 결과입니다.`)}
+          onClick={() => {}}
           className="book-list-search-btn"
         />
       </div>
 
+      {/* 검색 결과 건수 */}
+      {searchTerm && (
+        <p className="book-list-result-info">
+          <strong>"{searchTerm}"</strong> 검색 결과 {filteredBooks.length}권
+        </p>
+      )}
+
       <div className="book-list-grid">
-        {filteredBooks.map((book) => (
+        {pagedBooks.map((book) => (
           <div key={book.id} className="book-list-card">
             <img
               src={book.coverImageUrl || book.coverImage || noCover}
@@ -137,6 +230,12 @@ function BookList() {
           </div>
         )}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
