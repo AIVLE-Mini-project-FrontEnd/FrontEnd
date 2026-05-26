@@ -97,6 +97,11 @@ function Navigation() {
     },
   ];
 
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    onDelete?.({ id, title, author, tag, coverImageUrl });
+  };
+
   return (
     <nav className="nav-wrap">
       <div className="nav-bar">
