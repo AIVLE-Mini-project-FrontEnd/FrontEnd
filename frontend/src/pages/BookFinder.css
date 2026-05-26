@@ -103,6 +103,21 @@
   gap: 20px;
 }
 
+.book-finder__status {
+  padding: 28px 8px;
+  text-align: center;
+  color: #495057;
+}
+
+.book-finder__status--error {
+  color: #b02a37;
+  font-weight: 600;
+}
+
+.book-finder__status--empty {
+  color: #495057;
+}
+
 .book-card {
   display: flex;
   flex-direction: column;
@@ -182,6 +197,12 @@
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.book-card__author {
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  color: #6c757d;
 }
 
 @media (max-width: 900px) {

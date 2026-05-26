@@ -1,5 +1,4 @@
-import { useMemo, useState } from 'react'
-import db from '../../db.json'
+import { useEffect, useMemo, useState } from 'react'
 import './BookFinder.css'
 
 const ICON_PROPS = {
@@ -12,7 +11,15 @@ const ICON_PROPS = {
 function SearchIcon() {
   return (
     <svg {...ICON_PROPS}>
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" fill="none" />
+      <circle
+        cx="11"
+        cy="11"
+        r="7"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        fill="none"
+      />
+
       <path
         d="M20 20l-4-4"
         stroke="currentColor"
@@ -47,9 +54,13 @@ function BookCover({ book, rank }) {
 
   return (
     <div className="book-card__cover-wrap">
-      <span className="book-card__rank" aria-hidden="true">
+      <span
+        className="book-card__rank"
+        aria-hidden="true"
+      >
         {rank}
       </span>
+
       {!imageError && book.coverImageUrl ? (
         <img
           src={book.coverImageUrl}
@@ -66,17 +77,79 @@ function BookCover({ book, rank }) {
   )
 }
 
-function BookFinder() {
+function BookFinder({ onSelectBook }) {
   const [query, setQuery] = useState('')
-  const popularBooks = useMemo(() => getTopBooksByLikes(db.books ?? []), [])
+  const [books, setBooks] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const handleClear = () => setQuery('')
+  useEffect(() => {
+    let cancelled = false
+
+    async function load() {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const mod = await import('../../db.json')
+        const data = mod?.default ?? mod
+
+        setBooks(data?.books ?? [])
+      } catch (e) {
+        if (cancelled) return
+
+        setError('도서 목록을 불러오지 못했습니다.')
+        setBooks([])
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const normalizedQuery = query.trim().toLowerCase()
+
+  const filteredBooks = useMemo(() => {
+    return books.filter((book) => {
+      const title = String(book?.title ?? '').toLowerCase()
+      const author = String(book?.author ?? '').toLowerCase()
+
+      return (
+        !normalizedQuery ||
+        title.includes(normalizedQuery) ||
+        author.includes(normalizedQuery)
+      )
+    })
+  }, [books, normalizedQuery])
+
+  const popularBooks = useMemo(
+    () => getTopBooksByLikes(books, 5),
+    [books]
+  )
+
+  const displayBooks =
+    normalizedQuery.length > 0
+      ? filteredBooks
+      : popularBooks
+
+  const handleClear = () => {
+    setQuery('')
+  }
 
   return (
     <div className="book-finder">
       <main className="book-finder__main">
+
         <section className="book-finder__search-section">
           <h1>도서 검색</h1>
+
           <p className="book-finder__subtitle">
             제목이나 저자명으로 도서를 검색할 수 있습니다.
           </p>
@@ -93,7 +166,9 @@ function BookFinder() {
               aria-label="도서 검색"
               autoComplete="off"
             />
+
             <div className="book-finder__search-actions">
+
               {query.length > 0 && (
                 <button
                   type="button"
@@ -104,6 +179,7 @@ function BookFinder() {
                   <ClearIcon />
                 </button>
               )}
+
               <button
                 type="submit"
                 className="book-finder__search-submit"
@@ -117,19 +193,41 @@ function BookFinder() {
 
         <section className="book-finder__popular">
           <h2>인기검색어</h2>
-          <div className="book-finder__popular-grid">
-            {popularBooks.map((book, index) => (
-              <button
-                key={book.id}
-                type="button"
-                className="book-card"
-                onClick={() => setQuery(book.title)}
-              >
-                <BookCover book={book} rank={index + 1} />
-                <span className="book-card__title">{book.title}</span>
-              </button>
-            ))}
-          </div>
+
+          {loading ? (
+            <div className="book-finder__status">
+              로딩 중...
+            </div>
+          ) : error ? (
+            <div className="book-finder__status book-finder__status--error">
+              {error}
+            </div>
+          ) : displayBooks.length === 0 ? (
+            <div className="book-finder__status book-finder__status--empty">
+              검색 결과가 없습니다.
+            </div>
+          ) : (
+            <div className="book-finder__popular-grid">
+
+              {displayBooks.map((book, index) => (
+                <button
+                  key={book.id}
+                  type="button"
+                  className="book-card"
+                  onClick={() => onSelectBook(book.id)}
+                >
+                  <BookCover
+                    book={book}
+                    rank={index + 1}
+                  />
+
+                  <span className="book-card__title">
+                    {book.title}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>

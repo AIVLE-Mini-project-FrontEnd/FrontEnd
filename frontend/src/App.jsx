@@ -4,150 +4,262 @@ import BookList from './pages/BookList';
 import BookDetail from './pages/BookDetail';
 import BookRegister from './pages/BookRegister';
 import BookEdit from './pages/BookEdit';
+import Footer from './pages/Footer';
+import BookMain from './pages/BookMain';
+import DeletedBook from './pages/DeletedBook';
+import BookFinder from './pages/BookFinder';
 
 function App() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [selectedBookId, setSelectedBookId] = useState(null);
-  const [page, setPage] = useState("list");
+
+  // 현재 페이지 상태
+  const [page, setPage] = useState('main');
+
+  const [deletedRefreshKey, setDeletedRefreshKey] = useState(0);
+
+  const loadBooks = async () => {
+    const res = await fetch('http://localhost:3000/books');
+
+    if (!res.ok) {
+      throw new Error('서버 연결 실패');
+    }
+
+    const data = await res.json();
+
+    setBooks(
+      data.filter((book) => !book.deletedAt)
+    );
+  };
 
   useEffect(() => {
-    async function loadBooks() {
+    async function initBooks() {
       try {
-        const res = await fetch('http://localhost:3000/books');
-        if (!res.ok) throw new Error('서버 연결 실패');
-        const data = await res.json();
-        setBooks(data);
+        await loadBooks();
       } catch (err) {
         console.error(err);
         setError('도서 목록을 불러오지 못했습니다.');
       }
+
       setLoading(false);
     }
-    loadBooks();
+
+    initBooks();
   }, []);
 
+  // 도서 상세 페이지 이동
   const handleSelectBook = (id) => {
     setSelectedBookId(id);
+    setPage('detail');
   };
 
+  // 도서 목록 이동
   const handleGoToList = () => {
     setSelectedBookId(null);
-    setPage("list");
-    
-    fetch('http://localhost:3000/books')
-      .then((res) => res.json())
-      .then((data) => setBooks(data));
+
+    setPage('list');
+
+    loadBooks().catch((err) => {
+      console.error(err);
+      setError('도서 목록을 불러오지 못했습니다.');
+    });
   };
-  
-  const handleDelete = async (id) => {
+
+  // 메인 페이지 이동
+  const handleGoToMain = () => {
+    setSelectedBookId(null);
+    setPage('main');
+  };
+
+  // 도서 검색 페이지 이동
+  const handleGoToFinder = () => {
+    setSelectedBookId(null);
+    setPage('finder');
+  };
+
+  // 삭제 도서 페이지 이동
+  const handleGoToDeleted = () => {
+    setSelectedBookId(null);
+
+    setDeletedRefreshKey((prev) => prev + 1);
+
+    setPage('deleted');
+  };
+
+  const handleDelete = async (book) => {
+    const targetBook =
+      books.find((b) => b.id === book.id) ?? book;
+
+    const ok = window.confirm(
+      `"${targetBook.title}"을(를) 삭제 도서로 이동할까요?`
+    );
+
+    if (!ok) return;
+
     try {
-      await fetch(`http://localhost:3000/books/${id}`, {
-        method: 'DELETE'
-      });
-      alert('삭제 완료');
-      handleGoToList();
+      const res = await fetch(
+        `http://localhost:3000/books/${targetBook.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            deletedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          })
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error('삭제 도서 이동 실패');
+      }
+
+      setBooks((prev) =>
+        prev.filter((item) => item.id !== targetBook.id)
+      );
+
+      setSelectedBookId(null);
+
+      setDeletedRefreshKey((prev) => prev + 1);
+
+      setPage('deleted');
+
+      alert('삭제 도서로 이동했습니다.');
     } catch (err) {
       console.error(err);
-    }
-  };
-
-const handleGoToEdit = () => setPage("edit");
-
-  const handleBackFromEdit = () => {
-    setPage("");
-  };
-
-  const handleBookSave = (updatedBook) => {
-    setBooks(prev => prev.map(b => b.id === updatedBook.id ? updatedBook : b));
-  };
-
-  const handleCoverUpdate = async (bookId, imageSrc) => {
-    // 낙관적 업데이트: 서버 응답 전에 먼저 state 반영
-    setBooks(prev => prev.map(b => b.id === bookId ? { ...b, coverImageUrl: imageSrc } : b));
-    try {
-      const res = await fetch(`http://localhost:3000/books/${bookId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ coverImageUrl: imageSrc }),
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setBooks(prev => prev.map(b => b.id === data.id ? data : b));
-    } catch (err) {
-      console.error(err);
+      alert('삭제 도서 이동에 실패했습니다.');
     }
   };
 
   const handleUpdate = async (updatedBook) => {
+    try {
+      const now = new Date();
 
-  try {
-    const now = new Date();
-    const res = await fetch(
-      `http://localhost:3000/books/${updatedBook.id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          title: updatedBook.title,
-          author: updatedBook.author,
-          genre: updatedBook.genre,
-          content: updatedBook.content,
-          tag: updatedBook.tag,
-          coverImageUrl: updatedBook.coverImageUrl,
-          updatedAt: now
-        })
-      }
+      const res = await fetch(
+        `http://localhost:3000/books/${updatedBook.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title: updatedBook.title,
+            author: updatedBook.author,
+            genre: updatedBook.genre,
+            content: updatedBook.content,
+            tag: updatedBook.tag,
+            coverImageUrl: updatedBook.coverImageUrl,
+            updatedAt: now
+          })
+        }
+      );
+
+      const data = await res.json();
+
+      setBooks((prev) =>
+        prev.map((book) =>
+          book.id === data.id ? data : book
+        )
+      );
+
+      alert('수정 완료');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 로딩 화면
+  if (loading) {
+    return (
+      <>
+        <Header
+          onGoToMain={handleGoToMain}
+          onGoToFinder={handleGoToFinder}
+        />
+
+        <p>도서 정보를 불러오는 중...</p>
+      </>
     );
-    const data = await res.json();
-    // books 상태 업데이트
-    setBooks(prev =>
-      prev.map(book =>
-        book.id === data.id ? data : book
-      )
-    );
-    alert('수정 완료');
-  } catch (err) {
-    console.error(err);
   }
-};
 
-  if (loading) return <><Header /><p>도서 정보를 불러오는 중...</p></>;
-  if (error) return <><Header /><p>에러 발생: {error}</p></>;
+  // 에러 화면
+  if (error) {
+    return (
+      <>
+        <Header
+          onGoToMain={handleGoToMain}
+          onGoToFinder={handleGoToFinder}
+        />
 
-  const selectedBook = books.find(b => b.id === selectedBookId);
+        <p>에러 발생: {error}</p>
+      </>
+    );
+  }
+
+  const selectedBook =
+    books.find((b) => b.id === selectedBookId);
 
   return (
     <>
-      <Header />
+      <Header
+        onGoToMain={handleGoToMain}
+        onGoToFinder={handleGoToFinder}
+      />
 
       <main>
-        {page === "register" ? (
-          <BookRegister onBack={handleGoToList} />
-        ) : page === "edit" && selectedBook ? (
-          <BookEdit
-            book={selectedBook}
-            onCoverUpdate={handleCoverUpdate}
-            onBack={handleBackFromEdit}
-            onSave={handleBookSave}
-          />
-        ) : selectedBook ? (
+
+        {page === 'detail' && selectedBook ? (
+
           <BookDetail
             book={selectedBook}
             onBack={handleGoToList}
-            onDelete={() => handleDelete(selectedBook.id)}
-            onEdit={handleGoToEdit}
+            onDelete={() => handleDelete(selectedBook)}
+            onUpdate={handleUpdate}
           />
+
+        ) : page === 'main' ? (
+
+          <BookMain
+            onGoToList={handleGoToList}
+            onGoToRegister={() => setPage('register')}
+            onGoToDeleted={handleGoToDeleted}
+            onSelectBook={handleSelectBook}
+          />
+
+        ) : page === 'finder' ? (
+
+          <BookFinder
+            onSelectBook={handleSelectBook}
+          />
+
+        ) : page === 'register' ? (
+
+          <BookRegister
+            onBack={handleGoToList}
+          />
+
+        ) : page === 'deleted' ? (
+
+          <DeletedBook
+            key={deletedRefreshKey}
+          />
+
         ) : (
-          <>
-            <button onClick={() => setPage("register")}>+ 도서 등록</button>
-            <BookList books={books} onSelectBook={handleSelectBook} />
-          </>
+
+          <BookList
+            books={books}
+            onSelectBook={handleSelectBook}
+            onDeleteBook={handleDelete}
+          />
+
         )}
       </main>
+
+      <Footer />
     </>
   );
 }
