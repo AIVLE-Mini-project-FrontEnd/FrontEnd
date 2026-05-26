@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import './BookMain.css'
+import noCover from "../img/no-cover.svg";
 import {
   PieChart,
   Pie,
@@ -14,76 +14,37 @@ import {
 } from "recharts";
 
 
-function Navigation() {
-  const [isAllNavOpen, setIsAllNavOpen] = useState(false);
-  const [navMenu, setNavMenu] = useState(null);
-
+function Navigation({ onGoToList, onGoToRegister, onGoToDeleted }) {
   const NAV_LIST = [
     {
-      title: "도서검색",
-      items: ["통합검색"],
-    },
-    {
       title: "도서목록",
+      onClick: onGoToList,
     },
     {
-      title: "종류별",
-      items: ["장르별", "태그별", "좋아요순"],
+      title: "새 도서 등록",
+      onClick: onGoToRegister,
     },
     {
-      title: "지원",
-      items: ["공지사항", "자주 묻는 질문"],
+      title: "휴지통",
+      onClick: onGoToDeleted,
     },
   ];
 
   return (
     <nav className="nav-wrap">
       <div className="nav-bar">
-        <button
-          className="nav-menu-btn"
-          onClick={() => setIsAllNavOpen(!isAllNavOpen)}
-        >
-          ☰
-        </button>
-
         <div className="nav-menu-area">
           {NAV_LIST.map((menu) => (
-            <div
+            <button
               key={menu.title}
-              className="nav-item-wrap"
-              onMouseEnter={() => setNavMenu(menu.title)}
-              onMouseLeave={() => setNavMenu(null)}
+              className="nav-item"
+              onClick={menu.onClick}
             >
-              <button
-                className={`nav-item ${navMenu === menu.title ? "active" : ""
-                  }`}
-              >
-                {menu.title}
-              </button>
-
-              {!isAllNavOpen && navMenu === menu.title && (
-                <div className="single-dropdown">
-                  {menu.items.map((item) => (
-                    <p key={item}>{item}</p>
-                  ))}
-                </div>
-              )}
-            </div>
+              {menu.title}
+            </button>
           ))}
         </div>
       </div>
-
-      {isAllNavOpen && (
-        <div className="all-dropdown">
-          {NAV_LIST.map((menu) => (
-            <div className="all-column" key={menu.title}>
-              {menu.items.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
     </nav>
   );
 }
@@ -148,27 +109,23 @@ function SlideSection() {
 }
 */
 
-function BookSection() {
-  const visibleCount = 4;
+function BookSection({ onSelectBook }) {
+  const visibleCount = 5;
 
   const [popularIndex, setPopularIndex] = useState(0);
-  const [suggestIndex, setSuggestIndex] = useState(0);
+  const [popularBooks, setPopularBooks] = useState([]);
 
-  const popularBooks = [
-    { title: "도서명1", author: "저자명" },
-    { title: "도서명2", author: "저자명" },
-    { title: "도서명3", author: "저자명" },
-    { title: "도서명4", author: "저자명" },
-    { title: "도서명5", author: "저자명" },
-  ];
-
-  const suggestBooks = [
-    { title: "도서명1", author: "저자명" },
-    { title: "도서명2", author: "저자명" },
-    { title: "도서명3", author: "저자명" },
-    { title: "도서명4", author: "저자명" },
-    { title: "도서명5", author: "저자명" },
-  ];
+  useEffect(() => {
+    fetch('http://localhost:3000/books')
+      .then((res) => res.json())
+      .then((data) => {
+        const sorted = data
+          .filter((book) => !book.deletedAt)
+          .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+        setPopularBooks(sorted);
+      })
+      .catch((err) => console.error('도서 목록 불러오기 실패:', err));
+  }, []);
 
   const movePrev = (books, startIndex, setStartIndex) => {
     setStartIndex(
@@ -187,11 +144,6 @@ function BookSection() {
     popularIndex + visibleCount
   );
 
-  const suggestVisibleBooks = suggestBooks.slice(
-    suggestIndex,
-    suggestIndex + visibleCount
-  );
-
   return (
     <div className="likes-book-wrap">
       <section className="likes-book-section">
@@ -203,7 +155,13 @@ function BookSection() {
           <div className="likes-book-list">
             {popularVisibleBooks.map((book, index) => (
               <div className="likes-book-card" key={`${book.title}-${index}`}>
-                <div className="likes-book-thumbnail"></div>
+                <div className="likes-book-thumbnail" onClick={() => onSelectBook(book.id)} style={{ cursor: "pointer" }}>
+                  <img
+                    src={book.coverImageUrl || noCover}
+                    alt={book.title}
+                    className="likes-book-cover"
+                  />
+                </div>
                 <h3>{book.title}</h3>
                 <p className="likes-book-author">{book.author}</p>
               </div>
@@ -229,40 +187,6 @@ function BookSection() {
           </button>
         </div>
       </section>
-
-      <section className="likes-book-section">
-        <div className="likes-book-header">
-          <h2>AI 추천</h2>
-        </div>
-
-        <div className="likes-book-slider">
-          <div className="likes-book-list">
-            {suggestVisibleBooks.map((book, index) => (
-              <div className="likes-book-card" key={`${book.title}-${index}`}>
-                <div className="likes-book-thumbnail"></div>
-                <h3>{book.title}</h3>
-                <p className="likes-book-author">{book.author}</p>
-              </div>
-            ))}
-          </div>
-          <button
-            className="likes-book-btn left"
-            onClick={() =>
-              movePrev(suggestBooks, suggestIndex, setSuggestIndex)
-            }
-          >
-            ‹
-          </button>
-          <button
-            className="likes-book-btn right"
-            onClick={() =>
-              moveNext(suggestBooks, suggestIndex, setSuggestIndex)
-            }
-          >
-            ›
-          </button>
-        </div>
-      </section>
     </div>
   );
 }
@@ -272,13 +196,26 @@ function StatisticsSection() {
   const [genreChartType, setGenreChartType] = useState("pie");
   const [tagChartType, setTagChartType] = useState("pie");
 
-  const books = [
-    { title: "도서명1", genre: "소설", tag: ["추천도서", "한국문학"], likes: 120 },
-    { title: "도서명2", genre: "고전", tag: ["개발/프로그래밍", "베스트셀러"], likes: 95 },
-    { title: "도서명3", genre: "역사", tag: ["과학기술"], likes: 180 },
-    { title: "도서명4", genre: "IT", tag: ["고전문학"], likes: 70 },
-    { title: "도서명5", genre: "과학", tag: ["고전/동화", "고전문학"], likes: 210 },
-  ];
+  const [books, setBooks] = useState([]);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/books')
+      .then((res) => {
+        if (!res.ok) throw new Error('서버 연결 실패');
+        return res.json();
+      })
+      .then((data) => {
+        setBooks(data.filter((book) => !book.deletedAt));
+        setStatsLoading(false);
+      })
+      .catch((err) => {
+        console.error('통계 데이터 불러오기 실패:', err);
+        setStatsError('통계 데이터를 불러오지 못했습니다.');
+        setStatsLoading(false);
+      });
+  }, []);
 
   const colors = ["#3ba4f6", "#6b4fd6", "#a78bfa", "#2f5673", "#f5a623"];
 
@@ -296,8 +233,14 @@ function StatisticsSection() {
     const result = {};
 
     books.forEach((book) => {
-      book.tag.forEach((tag) => {
-        result[tag] = (result[tag] || 0) + book.likes;
+      const tags = Array.isArray(book.tag)
+        ? book.tag
+        : typeof book.tag === 'string' && book.tag.trim()
+          ? [book.tag]
+          : [];
+
+      tags.forEach((tag) => {
+        result[tag] = (result[tag] || 0) + (book.likes ?? 0);
       });
     });
 
@@ -394,6 +337,20 @@ function StatisticsSection() {
   const genreStats = GenreStats();
   const tagStats = TagStats();
 
+  if (statsLoading) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p>통계 데이터를 불러오는 중...</p>
+    </section>
+  );
+
+  if (statsError) return (
+    <section className="stats-section">
+      <h2>도서 통계</h2>
+      <p>{statsError}</p>
+    </section>
+  );
+
   return (
     <section className="stats-section">
       <h2>도서 통계</h2>
@@ -417,11 +374,11 @@ function StatisticsSection() {
   );
 }
 
-function BookMain() {
+function BookMain({ onGoToList, onGoToRegister, onGoToDeleted, onSelectBook }) {
   return (
     <>
-      <Navigation />
-      <BookSection />
+      <Navigation onGoToList={onGoToList} onGoToRegister={onGoToRegister} onGoToDeleted={onGoToDeleted} />
+      <BookSection onSelectBook={onSelectBook} />
       <StatisticsSection />
     </>
   );
