@@ -206,10 +206,12 @@ function App() {
   if (loading) {
     return (
       <>
-        <Header
-          onGoToMain={handleGoToMain}
-          onGoToFinder={handleGoToFinder}
-        />
+      <Header
+        onGoToMain={handleGoToMain}
+        onGoToList={handleGoToList}
+        onGoToRegister={() => setPage('register')}
+        onGoToDeleted={handleGoToDeleted}
+      />
 
         <p>도서 정보를 불러오는 중...</p>
       </>
@@ -222,7 +224,9 @@ function App() {
       <>
         <Header
           onGoToMain={handleGoToMain}
-          onGoToFinder={handleGoToFinder}
+          onGoToList={handleGoToList}
+          onGoToRegister={() => setPage('register')}
+          onGoToDeleted={handleGoToDeleted}
         />
 
         <p>에러 발생: {error}</p>
@@ -237,7 +241,9 @@ function App() {
     <>
       <Header
         onGoToMain={handleGoToMain}
-        onGoToFinder={handleGoToFinder}
+        onGoToList={handleGoToList}
+        onGoToRegister={() => setPage('register')}
+        onGoToDeleted={handleGoToDeleted}
       />
 
       <main>
@@ -255,9 +261,7 @@ function App() {
         ) : page === 'main' ? (
 
           <BookMain
-            onGoToList={handleGoToList}
-            onGoToRegister={() => setPage('register')}
-            onGoToDeleted={handleGoToDeleted}
+            onGoToFinder={handleGoToFinder}
             onSelectBook={handleSelectBook}
           />
 
