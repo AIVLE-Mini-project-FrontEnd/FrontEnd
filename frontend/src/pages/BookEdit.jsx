@@ -2,6 +2,7 @@ import { generateBookCover } from '../components/api/Openapi'
 import { generateOneLiner } from '../components/api/Openapi_text'
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import './BookEdit.css';
 
 const JSON_SERVER_URL = 'http://localhost:3000';
 
@@ -130,7 +131,7 @@ function BookEdit() {
 
   return (
     <div className="book-edit">
-      <button onClick={() => navigate(`/books/${id}`)}>← 뒤로 가기</button>
+      <button className="back-btn" onClick={() => navigate(`/books/${id}`)}>← 뒤로 가기</button>
       <h2>📝 도서 수정</h2>
 
       <div className="edit-layout">
@@ -182,6 +183,16 @@ function BookEdit() {
             />
           </div>
 
+          <div className="form-group">
+            <label>API Key</label>
+            <input
+              type="password"
+              placeholder="sk-..."
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+          </div>
+
           <button
             className="save-btn"
             onClick={handleSave}
@@ -217,20 +228,16 @@ function BookEdit() {
             <h3>🎨 AI 표지 생성</h3>
 
             <div className="form-group">
-              <label>API Key</label>
-              <input
-                type="password"
-                placeholder="sk-..."
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group">
               <label>품질</label>
               <select
                 value={quality}
-                onChange={(e) => setQuality(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value === 'high') {
+                    const ok = window.confirm('High 품질을 선택하면 이미지 생성에 비용이 발생합니다. 계속하시겠습니까?');
+                    if (!ok) return;
+                  }
+                  setQuality(e.target.value);
+                }}
                 disabled={loading}
               >
                 <option value="low">Low</option>
