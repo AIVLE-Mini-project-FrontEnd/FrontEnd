@@ -107,6 +107,49 @@ button {
 }
 
 /* ============================================================
+   Header Right Icons
+   ============================================================ */
+
+.header-inner {
+  position: relative;
+}
+
+.header-icons {
+  position: absolute;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-link-btn {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.icon-link-btn:hover {
+  transform: scale(1.1);
+}
+
+.icon-link-btn img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+@media (max-width: 1200px) {
+  .header-icons {
+    right: 3%;
+  }
+}
+
+/* ============================================================
    Main (자료검색 창)
    ============================================================ */
 .search-area {
