@@ -4,9 +4,9 @@
 
 ## 프로젝트 소개&구성
 
-AI 표지 생성을 지원하는 도서관리 시스템 "걷기가 서재"입니다. 누가나 작가가 되어 자유롭게 글을 집필하고 공개할 수 있는 창작 플랫폼입니다.
+AI 표지 생성을 지원하는 도서관리 시스템 "걷기가 서재"입니다. 누구나 작가가 되어 자유롭게 도서에 대한 글을 작성하고, 수정할 수 있는 창작 플랫폼입니다.
 
-책의 내용을 시각적으로 전달하고, 내용에 맞는 표지를 선정하여 독자로 하여금 책을 클릭하도록 유도합니다.
+책의 내용을 시각적으로 전달하고, 좋아요/댓글 기능을 통해 사람들과 소통할 수 있습니다.
 
 
 
@@ -14,19 +14,31 @@ AI 표지 생성을 지원하는 도서관리 시스템 "걷기가 서재"입니
 
 - 도서 메인페이지 UI
 
-
+<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/fa9760c7-5aec-4597-a6ea-d769c1bfc2bf" />
 
 - 도서 등록페이지 UI
 
-
+<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/bb992098-8d32-4d9f-8584-0587b61859ba" />
 
 - 도서 목록페이지 UI
 
-
+<img width="1280" height="699" alt="Image" src="https://github.com/user-attachments/assets/a7f2122c-0772-4221-a97b-55c97388b94f" />
 
 - 도서 수정페이지 UI
 
 <img width="1268" height="668" alt="Image" src="https://github.com/user-attachments/assets/14ce77f1-c4f3-449c-b7a0-098b07e529d4" />
+
+- 도서 삭제 페이지 UI
+
+<img width="1280" height="704" alt="Image" src="https://github.com/user-attachments/assets/4d0b9076-9a6c-4bef-93b8-8f8d78c8cfb6" />
+
+- 도서 통계 페이지 UI
+
+<img width="1280" height="650" alt="Image" src="https://github.com/user-attachments/assets/a14b9a29-ab4e-480e-9562-83e1dfdd01b0" />
+
+- 휴지통 UI
+
+<img width="1280" height="673" alt="Image" src="https://github.com/user-attachments/assets/4425554b-b3b7-41b9-8367-b472aef09257" />
 
 
 
