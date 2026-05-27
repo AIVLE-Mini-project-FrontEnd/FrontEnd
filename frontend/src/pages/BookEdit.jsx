@@ -85,6 +85,7 @@ function BookEdit() {
       alert('OpenAI API Key를 입력해주세요.')
       return
     }
+    if (!window.confirm('AI 한줄평 생성 시 OpenAI API 비용이 발생합니다. 계속하시겠습니까?')) return
     setOneLinerLoading(true)
     try {
       const editedBook = { title, author, content, tag, genre: book.genre }
@@ -106,6 +107,7 @@ function BookEdit() {
       alert('OpenAI API Key를 입력해주세요.');
       return;
     }
+    if (!window.confirm('AI 표지 생성 시 OpenAI API 비용이 발생합니다. 계속하시겠습니까?')) return;
     setLoading(true);
     try {
       const editedBook = { title, author, content, tag, genre: book.genre };
@@ -231,13 +233,7 @@ function BookEdit() {
               <label>품질</label>
               <select
                 value={quality}
-                onChange={(e) => {
-                  if (e.target.value === 'high') {
-                    const ok = window.confirm('High 품질을 선택하면 이미지 생성에 비용이 발생합니다. 계속하시겠습니까?');
-                    if (!ok) return;
-                  }
-                  setQuality(e.target.value);
-                }}
+                onChange={(e) => setQuality(e.target.value)}
                 disabled={loading}
               >
                 <option value="low">Low</option>

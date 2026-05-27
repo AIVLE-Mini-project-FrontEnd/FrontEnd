@@ -206,11 +206,7 @@ function BookDetail() {
         {/* 상단 버튼 */}
         <div style={styles.buttonRow}>
           {!isEditMode ? (
-            <button style={styles.editBtn} onClick={() => {
-              if (window.confirm('도서 수정 이미지 생성 시 비용이 발생할 수 있습니다. 계속하시겠습니까?')) {
-                navigate(`/books/${id}/edit`);
-              }
-            }}>수정</button>
+            <button style={styles.editBtn} onClick={() => navigate(`/books/${id}/edit`)}>수정</button>
           ) : (
             <button style={styles.saveBtn} onClick={handleSubmitUpdate}>✅ 수정 완료</button>
           )}
