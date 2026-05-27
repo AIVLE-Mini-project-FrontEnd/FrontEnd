@@ -2,10 +2,11 @@ import { generateBookCover } from '../components/api/Openapi'
 import { generateOneLiner } from '../components/api/Openapi_text'
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { GENRE_LIST, TAG_LIST } from "../bookOption";
 import './BookEdit.css';
 
+
 const JSON_SERVER_URL = 'http://localhost:3000';
-const TAG_LIST = ['한국문학', '고전문학', '개발/프로그래밍', '역사/인문', '고전/동화', '베스트셀러', '추천도서', '과학/기술'];
 
 function BookEdit() {
   const { id } = useParams();
